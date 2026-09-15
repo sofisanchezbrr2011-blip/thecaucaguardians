@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cauca Guardians - Fixed Soundtrack Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --river-deep:#0F3D3E;
+    --river-mid:#155E5B;
+    --gold:#C9A227;
+    --gold-light:#E4C158;
+    --danger:#B23A2E;
+    --leaf:#4C9A6A;
+    --sand:#EDE3D0;
+    --ink:#12211F;
+    --paper:#F7F2E7;
+  }
+  *{box-sizing:border-box; user-select:none; -webkit-user-select:none;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'VT323', monospace;
+    font-size:1.18rem;
+    background:var(--river-deep);
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,#brand-title,.level-tag,.btn,#lang-toggle,.q-count,.shop-btn,.dpad-btn{
+    font-family:'Press Start 2P', monospace;
+    font-weight:400; margin:0; line-height:1.5;
+  }
+  button{ font-family:inherit; cursor:pointer; }
+  #bg-waves{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 2px, transparent 2px, transparent 4px),
+      linear-gradient(180deg, var(--river-deep) 0%, var(--river-mid) 100%);
+  }
+  #app{
+    position:relative; z-index:1;
+    max-width:920px; margin:0 auto;
+    min-height:100vh; display:flex; flex-direction:column;
+    padding:0 0 40px 0;
+  }
+
+  /* HUD */
+  #hud{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 20px; color:var(--sand); gap:10px; flex-wrap:wrap;
+  }
+  #hud .brand{ display:flex; align-items:center; gap:8px; }
+  #hud .brand .mark{
+    width:20px;height:20px; background:var(--gold);
+    clip-path: polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+  }
+  #hud .brand span{ font-size:0.7rem; }
+  #hud .stats{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .stat{ display:flex; align-items:center; gap:6px; font-size:1.1rem; }
+  .coin-ic{
+    width:16px;height:16px; background: var(--gold);
+    clip-path: polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+    display:inline-block;
+  }
+  .healthbar-wrap{ display:flex; align-items:center; gap:6px; }
+  .healthbar{
+    width:110px; height:12px; background:rgba(247,242,231,0.2);
+    border:2px solid var(--ink); overflow:hidden; position:relative;
+  }
+  .healthbar i{
+    display:block; height:100%;
+    background:linear-gradient(90deg, var(--danger), var(--gold) 50%, var(--leaf));
+    transition:width .3s;
+  }
+  .hud-btn{
+    background:rgba(247,242,231,0.15); border:2px solid rgba(247,242,231,0.5);
+    color:var(--sand); padding:6px 10px; font-size:0.6rem;
+  }
+  .hud-btn:hover{ background:rgba(247,242,231,0.3); }
+  .hud-btn.shop-btn{ background:var(--gold); color:var(--ink); border-color:var(--ink); font-weight:bold; }
+
+  #active-skills-bar{ display:flex; gap:6px; padding:4px 20px 8px; justify-content:flex-end; }
+  .skill-badge{
+    background:var(--gold-light); border:1px solid var(--ink);
+    color:var(--ink); font-size:0.8rem; padding:2px 6px;
+    display:flex; align-items:center; gap:4px;
+  }
+
+  .wave-pixel{
+    height:12px; width:100%;
+    background-image:
+      linear-gradient(-45deg, var(--paper) 6px, transparent 0),
+      linear-gradient(45deg, var(--paper) 6px, transparent 0);
+    background-position:0 0, 6px 0; background-size:12px 12px; background-repeat:repeat-x;
+  }
+
+  #screen{
+    flex:1;
+    background:
+      repeating-linear-gradient(0deg, rgba(18,33,31,0.03) 0 1px, transparent 1px 4px),
+      var(--paper);
+    margin:0 16px; border:3px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(0,0,0,0.35); position:relative;
+  }
+  .screen-inner{ padding:28px 32px 36px; }
+  @media (max-width:600px){ .screen-inner{ padding:16px 12px 20px; } #screen{margin:0 8px;} }
+
+  .level-tag{
+    display:inline-block; font-size:0.6rem; color:var(--paper);
+    background:var(--river-mid); padding:5px 8px; margin-bottom:12px; border:2px solid var(--ink);
+  }
+  h2.title{ font-family:'Press Start 2P', monospace; font-size:1.1rem; line-height:1.6; color:var(--river-deep); }
+  .subtitle{ margin-top:12px; font-size:1.25rem; line-height:1.4; color:#2c3a38; }
+
+  .btn{
+    border:3px solid var(--ink); padding:12px 18px; font-size:0.68rem;
+    background:var(--river-deep); color:var(--sand); box-shadow:3px 3px 0 rgba(0,0,0,0.4);
+  }
+  .btn:hover{ background:var(--river-mid); }
+  .btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 rgba(0,0,0,0.4); }
+
+  .actions-row{ margin-top:22px; display:flex; gap:12px; flex-wrap:wrap; }
+
+  /* Preguntas */
+  .q-block{ margin-top:18px; }
+  .q-count{ font-size:0.6rem; color:#6a7a76; margin-bottom:8px; display:block; }
+  .q-prompt{ font-size:1.25rem; font-weight:600; color:var(--ink); margin-bottom:16px; }
+  .options{ display:flex; flex-direction:column; gap:8px; }
+  .opt{
+    text-align:left; border:2px solid var(--ink); background:#fff;
+    padding:12px 14px; font-size:1.15rem; color:var(--ink);
+  }
+  .opt:hover:not(:disabled){ background:rgba(21,94,91,0.08); }
+  .opt.correct{ border-color:var(--leaf); background:var(--leaf); color:#fff; }
+  .opt.incorrect{ border-color:var(--danger); background:var(--danger); color:#fff; }
+
+  .feedback{
+    margin-top:14px; padding:12px 14px; font-size:1.1rem;
+    background:rgba(21,94,91,0.08); border:2px solid var(--river-mid); border-left:5px solid var(--river-mid);
+  }
+  .feedback.bad{ background:rgba(178,58,46,0.09); border-color:var(--danger); }
+
+  /* Canvas y Controles */
+  .game-hud{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:8px; font-size:0.6rem; font-family:'Press Start 2P'; color:var(--river-deep);
+  }
+  .canvas-wrap{ margin-top:8px; border:3px solid var(--ink); line-height:0; position:relative; }
+  #mg-canvas{ display:block; width:100%; image-rendering:pixelated; background:#DFF3EC; }
+
+  .dpad-container{ display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:14px; gap:4px; }
+  .dpad-row{ display:flex; gap:4px; }
+  .dpad-btn{
+    width:50px; height:50px; font-size:1rem; background:var(--river-mid); color:var(--sand);
+    border:3px solid var(--ink); box-shadow:2px 2px 0 rgba(0,0,0,0.3);
+    display:flex; align-items:center; justify-content:center; touch-action:manipulation;
+  }
+  .dpad-btn:active, .dpad-btn.active{ background:var(--gold); color:var(--ink); transform:translate(1px,1px); box-shadow:none; }
+  .controls-hint{ text-align:center; font-size:0.85rem; color:#555; margin-top:6px; }
+
+  /* Modal Tienda */
+  #shop-modal{
+    display:none; position:fixed; inset:0; z-index:100;
+    background:rgba(15,61,62,0.85); backdrop-filter:blur(2px);
+    align-items:center; justify-content:center; padding:16px;
+  }
+  #shop-modal.open{ display:flex; }
+  .shop-card{
+    background:var(--paper); border:4px solid var(--ink);
+    max-width:540px; width:100%; padding:22px; box-shadow:8px 8px 0 rgba(0,0,0,0.5);
+  }
+  .shop-title{ font-size:0.9rem; color:var(--river-deep); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+  .shop-grid{ display:flex; flex-direction:column; gap:10px; margin-top:14px; max-height:60vh; overflow-y:auto; }
+  .shop-item{
+    border:2px solid var(--ink); background:#fff; padding:10px 12px;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .shop-item-info h4{ margin:0; font-family:'Press Start 2P'; font-size:0.65rem; color:var(--river-deep); }
+  .shop-item-info p{ margin:4px 0 0; font-size:1rem; color:#444; }
+  .buy-btn{
+    border:2px solid var(--ink); background:var(--gold); color:var(--ink);
+    padding:8px 10px; font-size:0.6rem; font-weight:bold; white-space:nowrap;
+  }
+  .buy-btn:disabled{ opacity:0.4; cursor:not-allowed; background:#ccc; }
+
+  footer{ text-align:center; color:rgba(247,242,231,0.6); font-size:0.7rem; padding:14px 10px 0; }
+</style>
+</head>
+<body>
+<div id="bg-waves"></div>
+<div id="app">
+
+  <div id="hud">
+    <div class="brand">
+      <span class="mark"></span>
+      <span id="brand-title">The Cauca Guardians</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="coin-ic"></span><span id="coin-count">0</span></div>
+      <div class="healthbar-wrap">
+        <div class="healthbar"><i id="health-fill" style="width:70%"></i></div>
+        <span id="health-num" style="font-size:0.9rem;">70</span>
+      </div>
+      <button class="hud-btn shop-btn" id="open-shop">🛒 TIENDA</button>
+      <button class="hud-btn" id="sound-toggle">🎵 MUSIC: ON</button>
+      <button class="hud-btn" id="lang-toggle">EN</button>
+    </div>
+  </div>
+
+  <div id="active-skills-bar"></div>
+  <div class="wave-pixel"></div>
+
+  <div id="screen"><div class="screen-inner" id="screen-inner"></div></div>
+
+  <!-- ECO-SHOP MODAL -->
+  <div id="shop-modal">
+    <div class="shop-card">
+      <div class="shop-title">
+        <span>🛒 ECO-SHOP DE HABILIDADES</span>
+        <button class="hud-btn" id="close-shop" style="background:var(--danger);color:#fff;">✕</button>
+      </div>
+      <p style="margin:0;font-size:1.1rem;color:#333;">Invierte tus <strong>Cauca Coins</strong> para proteger el río Cauca:</p>
+      <div class="shop-grid" id="shop-items-container"></div>
+    </div>
+  </div>
+
+  <footer id="footer-note">Caucasia · Bajo Cauca · Antioquia — Proyecto educativo bilingüe</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var LANG = 'es';
+  function t(o){ return (typeof o === 'string') ? o : o[LANG]; }
+
+  var soundEnabled = true;
+  var audioCtx = null;
+  var musicTimer = null;
+
+  function initAudio(){
+    if(!audioCtx){
+      var AudioContext = window.AudioContext || window.webkitAudioContext;
+      if(AudioContext) audioCtx = new AudioContext();
+    }
+    if(audioCtx && audioCtx.state === 'suspended'){
+      audioCtx.resume();
+    }
+  }
+
+  // SINTETIZADOR CORREGIDO (Transición lineal fluida para notas continuas)
+  function playTone(freq, duration, type, vol){
+    if(!soundEnabled) return;
+    initAudio();
+    if(!audioCtx) return;
+    try {
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      var now = audioCtx.currentTime;
+      
+      osc.type = type || 'square';
+      osc.frequency.setValueAtTime(freq, now);
+      
+      gain.gain.setValueAtTime(vol || 0.1, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + duration);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.start(now);
+      osc.stop(now + duration);
+    } catch(e){}
+  }
+
+  function play8BitDrum(){
+    if(!soundEnabled) return;
+    initAudio();
+    if(!audioCtx) return;
+    try {
+      var bufferSize = audioCtx.sampleRate * 0.04;
+      var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      var data = buffer.getChannelData(0);
+      for(var i = 0; i < bufferSize; i++){ data[i] = Math.random() * 2 - 1; }
+      var noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      var gain = audioCtx.createGain();
+      var now = audioCtx.currentTime;
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+      noise.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start(now);
+    } catch(e){}
+  }
+
+  // EFECTOS DE SONIDO (SFX)
+  function playSfxGood(){ playTone(587.33, 0.08, 'square', 0.15); setTimeout(function(){ playTone(880, 0.12, 'square', 0.15); }, 70); }
+  function playSfxBad(){ playTone(160, 0.1, 'sawtooth', 0.18); setTimeout(function(){ playTone(110, 0.18, 'sawtooth', 0.18); }, 80); }
+  function playSfxLevelUp(){
+    var notes = [261.63, 329.63, 392.00, 523.25, 659.25];
+    notes.forEach(function(n, i){ setTimeout(function(){ playTone(n, 0.12, 'triangle', 0.2); }, i * 65); });
+  }
+  function playSfxBuy(){ playTone(440, 0.06, 'square', 0.15); setTimeout(function(){ playTone(880, 0.15, 'square', 0.15); }, 50); }
+
+  // REPRODUCTOR BGM CHIPTUNE (Volúmenes ajustados y loop robusto)
+  var leadMelody = [
+    {f: 329.63, d: 0.18}, {f: 392.00, d: 0.18}, {f: 440.00, d: 0.18}, {f: 523.25, d: 0.18},
+    {f: 440.00, d: 0.18}, {f: 392.00, d: 0.18}, {f: 329.63, d: 0.35},
+    {f: 293.66, d: 0.18}, {f: 329.63, d: 0.18}, {f: 392.00, d: 0.18}, {f: 440.00, d: 0.18},
+    {f: 392.00, d: 0.18}, {f: 329.63, d: 0.18}, {f: 293.66, d: 0.35}
+  ];
+  var bassMelody = [
+    {f: 130.81, d: 0.35}, {f: 164.81, d: 0.35}, {f: 146.83, d: 0.35}, {f: 130.81, d: 0.35}
+  ];
+
+  var noteStep = 0, bassStep = 0;
+
+  function startMusic(){
+    initAudio();
+    if(musicTimer) clearInterval(musicTimer);
+
+    musicTimer = setInterval(function(){
+      if(!soundEnabled) return;
+      initAudio();
+
+      // Melodía Principal (Square Wave)
+      var note = leadMelody[noteStep];
+      playTone(note.f, note.d, 'square', 0.12);
+      noteStep = (noteStep + 1) % leadMelody.length;
+
+      // Línea de Bajo (Triangle Wave)
+      if(noteStep % 2 === 0){
+        var bNote = bassMelody[bassStep];
+        playTone(bNote.f, bNote.d, 'triangle', 0.15);
+        bassStep = (bassStep + 1) % bassMelody.length;
+      }
+
+      // Percusión Sintética (Snare Noise)
+      if(noteStep % 4 === 2){
+        play8BitDrum();
+      }
+
+    }, 200);
+  }
+
+  function stopMusic(){
+    if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
+  }
+
+  // CONTROLES DE TECLADO
+  var keys = { up: false, down: false, left: false, right: false };
+  window.addEventListener('keydown', function(e){
+    if(e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = true;
+    if(e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = true;
+    if(e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = true;
+    if(e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
+  });
+  window.addEventListener('keyup', function(e){
+    if(e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = false;
+    if(e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = false;
+    if(e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = false;
+    if(e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
+  });
+
+  // ESTADO Y TIENDA
+  var state = {
+    coins: 30, health: 70, levelIndex: 0, phase: 'intro', stepIndex: 0,
+    skills: { shield: 0, magnet: false, voice: false, filter: 0 }
+  };
+
+  var SKILLS_DEF = [
+    {
+      id: 'shield', name: {es:'🛡️ Escudo Anti-Mercurio', en:'🛡️ Mercury Shield'},
+      desc: {es:'Protege contra 3 impactos de mercurio/basura.', en:'Protects against 3 hazard hits.'}, cost: 20,
+      buy: function(){ state.skills.shield += 3; }
+    },
+    {
+      id: 'magnet', name: {es:'🧲 Imán Ecológico', en:'🧲 Eco-Magnet'},
+      desc: {es:'Atrae gotas y peces hacia ti en el minijuego.', en:'Attracts clean items toward you.'}, cost: 25,
+      buy: function(){ state.skills.magnet = true; }
+    },
+    {
+      id: 'voice', name: {es:'📢 Voz Comunitaria', en:'📢 Community Voice'},
+      desc: {es:'Duplica la salud ganada por respuestas correctas.', en:'Doubles river health gained from choices.'}, cost: 30,
+      buy: function(){ state.skills.voice = true; }
+    },
+    {
+      id: 'filter', name: {es:'🌿 Purificador Bio-Remediador', en:'🌿 Bio-Filter'},
+      desc: {es:'Restaura +20 de Salud del Río inmediatamente.', en:'Instantly restores +20 River Health.'}, cost: 35,
+      buy: function(){ applyHealth(20); state.skills.filter++; }
+    }
+  ];
+
+  function clampHealth(){ state.health = Math.max(0, Math.min(100, state.health)); }
+  function applyHealth(delta){
+    if(delta > 0 && state.skills.voice){ delta *= 2; }
+    state.health += delta; clampHealth(); updateHud();
+  }
+  function addCoins(n){ state.coins += n; updateHud(); }
+
+  function updateHud(){
+    document.getElementById('coin-count').textContent = state.coins;
+    document.getElementById('health-fill').style.width = state.health + '%';
+    document.getElementById('health-num').textContent = state.health;
+    document.getElementById('sound-toggle').textContent = soundEnabled ? '🎵 MUSIC: ON' : '🔇 MUSIC: OFF';
+    document.getElementById('lang-toggle').textContent = LANG === 'es' ? 'EN' : 'ES';
+
+    var skillBar = document.getElementById('active-skills-bar');
+    var html = '';
+    if(state.skills.shield > 0) html += '<span class="skill-badge">🛡️ ' + state.skills.shield + '</span>';
+    if(state.skills.magnet) html += '<span class="skill-badge">🧲 MAX</span>';
+    if(state.skills.voice) html += '<span class="skill-badge">📢 2x</span>';
+    skillBar.innerHTML = html;
+  }
+
+  function renderShop(){
+    var container = document.getElementById('shop-items-container');
+    var html = '';
+    SKILLS_DEF.forEach(function(sk){
+      var canBuy = state.coins >= sk.cost;
+      var isOwnedPassive = (sk.id === 'magnet' && state.skills.magnet) || (sk.id === 'voice' && state.skills.voice);
+      html += '<div class="shop-item">'+
+        '<div class="shop-item-info"><h4>'+t(sk.name)+'</h4><p>'+t(sk.desc)+'</p></div>'+
+        '<button class="buy-btn" data-id="'+sk.id+'" '+(canBuy && !isOwnedPassive ? '' : 'disabled')+'>'+
+          (isOwnedPassive ? t({es:'COMPRADO',en:'OWNED'}) : sk.cost + ' COINS')+
+        '</button></div>';
+    });
+    container.innerHTML = html;
+
+    container.querySelectorAll('.buy-btn').forEach(function(btn){
+      btn.onclick = function(){
+        var id = btn.getAttribute('data-id');
+        var sk = SKILLS_DEF.find(function(s){ return s.id === id; });
+        if(sk && state.coins >= sk.cost){
+          state.coins -= sk.cost; sk.buy(); playSfxBuy(); updateHud(); renderShop();
+        }
+      };
+    });
+  }
+
+  document.getElementById('open-shop').onclick = function(){ renderShop(); document.getElementById('shop-modal').classList.add('open'); };
+  document.getElementById('close-shop').onclick = function(){ document.getElementById('shop-modal').classList.remove('open'); };
+
+  document.getElementById('sound-toggle').addEventListener('click', function(){
+    soundEnabled = !soundEnabled;
+    if(soundEnabled){
+      startMusic();
+    } else {
+      stopMusic();
+    }
+    updateHud();
+  });
+
+  document.getElementById('lang-toggle').addEventListener('click', function(){
+    LANG = (LANG === 'es') ? 'en' : 'es'; updateHud(); render();
+  });
+
+  // NIVELES
+  var LEVELS = [
+    {
+      key:'l1', name:{es:'Nivel 1 · El Río Sano', en:'Level 1 · The Healthy River'},
+      intro:{es:'Bienvenido(a) a Caucasia. Usa WASD, flechas o el D-Pad táctil para recolectar agua limpia.', en:'Welcome to Caucasia. Use WASD, arrow keys, or touch D-Pad.'},
+      type:'quiz',
+      game:{
+        instructions:{es:'Controles: WASD / Flechas / D-Pad. Recoge gotas limpia e ignora la basura.', en:'Controls: WASD / Arrows / D-Pad. Collect clean water, avoid trash.'},
+        goodColor:'#4C9A6A', hazardColor:'#8a7452', goodShape:'drop', hazardShape:'trash', goodCount:4, hazardCount:3, duration:16, goal:8, bgFrom:'#DFF3EC'
+      },
+      items:[{
+        prompt:{es:'¿Por qué el río Cauca es vital para Caucasia y el Bajo Cauca?', en:'Why is the Cauca River vital to Caucasia?'},
+        options:[
+          {es:'Solo es una vía de transporte rápida', en:'It is only a quick transport route'},
+          {es:'Provee agua, alimento, pesca y sustento económico a miles de familias', en:'Provides water, food, fishing, and economic support for thousands'},
+          {es:'No influye en la vida diaria de la comunidad', en:'Has no influence on daily community life'}
+        ], correct:1, fb:{es:'¡Correcto! El río es el corazón biológico y económico de la región.', en:'Correct! The river is the region\'s biological heart.'}, delta:6
+      }]
+    },
+    {
+      key:'l2', name:{es:'Nivel 2 · La Amenaza del Mercurio', en:'Level 2 · The Mercury Threat'},
+      intro:{es:'La minería ilegal vierte mercurio al agua. Esquiva los barriles de contaminación.', en:'Illegal mining spills mercury into water. Dodge contamination barrels.'},
+      type:'quiz',
+      game:{
+        instructions:{es:'Colecta muestras de laboratorio y evita los barriles de mercurio.', en:'Collect lab samples and avoid mercury drums.'},
+        goodColor:'#2E86AB', hazardColor:'#B23A2E', goodShape:'vial', hazardShape:'drum', goodCount:4, hazardCount:4, duration:16, goal:8, bgFrom:'#E9E2C9'
+      },
+      items:[{
+        prompt:{es:'¿Qué ocurre cuando el mercurio entra a la cadena alimenticia acuática?', en:'What happens when mercury enters the aquatic food chain?'},
+        options:[
+          {es:'Se evapora sin causar ningún daño', en:'Evaporates without causing damage'},
+          {es:'Se bioacumula en los peces y llega a las personas que consumen pescado', en:'Bioaccumulates in fish and reaches humans who eat fish'},
+          {es:'Hace que los peces naden más rápido', en:'Makes fish swim faster'}
+        ], correct:1, fb:{es:'La bioacumulación por mercurio afecta gravemente la salud humana y la fauna.', en:'Mercury bioaccumulation severely harms human and fish health.'}, delta:8
+      }]
+    },
+    {
+      key:'l3', name:{es:'Nivel 3 · Fauna y Pescadores', en:'Level 3 · Wildlife & Fishermen'},
+      intro:{es:'Protege especies emblemáticas como el bocachico durante la época de subienda.', en:'Protect iconic species like bocachico during spawning seasons.'},
+      type:'quiz',
+      game:{
+        instructions:{es:'Guía a los bocachicos hacia aguas seguras y evita las redes ilegales.', en:'Guide bocachico fish to safety and avoid illegal nets.'},
+        goodColor:'#C9A227', hazardColor:'#4a4a4a', goodShape:'fish', hazardShape:'net', goodCount:5, hazardCount:3, duration:18, goal:10, bgFrom:'#CDEAF0'
+      },
+      items:[{
+        prompt:{es:'¿Qué es la "subienda" para los pescadores artesanales?', en:'What is "subienda" for local artisanal fishers?'},
+        options:[
+          {es:'La migración masiva de peces para reproducirse en el río', en:'Mass migration of fish upriver to reproduce'},
+          {es:'Una tormenta de verano', en:'A summer storm'},
+          {es:'Una feria gastronómica local', en:'A local food festival'}
+        ], correct:0, fb:{es:'Cuidar la subienda garantiza alimento y empleo responsable para el futuro.', en:'Protecting subienda ensures food security for the future.'}, delta:8
+      }]
+    }
+  ];
+
+  var PIXEL_GRIDS = {
+    drop:   ["...##...","..####..",".######.","########","########",".######.","..####..","...##..."],
+    trash:  ["########","#*#..#*#","#..##..#","#.#..#.#","#.####.#","#.#..#.#","#..##..#","########"],
+    vial:   ["..####..","..#**#..","..#..#..",".######.",".#*..*#.",".######.",".#*..*#.","..####.."],
+    drum:   [".######.","########","#oooooo#","########","########","#oooooo#","########",".######."],
+    fish:   ["...####.","..######",".######*","########","########",".#######","..######","...####."],
+    net:    ["#.#.#.#.",".#.#.#.#","#.#.#.#.",".#.#.#.#","#.#.#.#.",".#.#.#.#","#.#.#.#.",".#.#.#.#"]
+  };
+  var PLAYER_GRID = [".oooooo.","o######o","o#*##*#o","o######o","o######o",".o####o.","..o##o..","..o##o.."];
+
+  function drawPixelGrid(ctx, grid, x, y, r, mainColor){
+    var cell = (r*2)/8, startX = x - r, startY = y - r;
+    for(var row=0; row<8; row++){
+      for(var col=0; col<8; col++){
+        if(grid[row][col] === '.') continue;
+        ctx.fillStyle = (grid[row][col]==='o') ? '#0B2B2C' : (grid[row][col]==='*') ? '#FFF' : mainColor;
+        ctx.fillRect(Math.round(startX+col*cell), Math.round(startY+row*cell), Math.ceil(cell)+1, Math.ceil(cell)+1);
+      }
+    }
+  }
+
+  var miniGameAnim = null;
+  var screenEl = document.getElementById('screen-inner');
+
+  function render(){
+    if(miniGameAnim){ cancelAnimationFrame(miniGameAnim); miniGameAnim = null; }
+    if(state.levelIndex >= LEVELS.length){ renderEnding(); return; }
+    var level = LEVELS[state.levelIndex];
+    if(state.phase === 'intro') renderLevelIntro(level);
+    else if(state.phase === 'game') renderMiniGame(level);
+    else renderQuiz(level);
+  }
+
+  function renderLevelIntro(level){
+    screenEl.innerHTML =
+      '<div class="hero">'+
+        '<div class="level-tag">'+t(level.name)+'</div>'+
+        '<h2 class="title">'+t(level.intro)+'</h2>'+
+        '<div class="actions-row"><button class="btn" id="start-level">'+t({es:'Comenzar nivel', en:'Start level'})+'</button></div>'+
+      '</div>';
+    document.getElementById('start-level').onclick = function(){
+      startMusic(); state.phase = 'game'; render();
+    };
+  }
+
+  function renderQuiz(level){
+    var q = level.items[state.stepIndex];
+    var html =
+      '<div class="level-tag">'+t(level.name)+'</div>'+
+      '<div class="q-block">'+
+        '<span class="q-count">'+t({es:'Pregunta', en:'Question'})+' '+(state.stepIndex+1)+' / '+level.items.length+'</span>'+
+        '<div class="q-prompt">'+t(q.prompt)+'</div>'+
+        '<div class="options">';
+    q.options.forEach(function(opt, i){ html += '<button class="opt" data-i="'+i+'">'+t(opt)+'</button>'; });
+    html += '</div><div id="fb-area"></div></div>';
+    screenEl.innerHTML = html;
+
+    var buttons = screenEl.querySelectorAll('.opt');
+    buttons.forEach(function(btn){
+      btn.onclick = function(){
+        buttons.forEach(function(b){ b.disabled = true; });
+        var i = parseInt(btn.getAttribute('data-i'),10);
+        var isCorrect = (i === q.correct);
+        btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if(isCorrect){ playSfxGood(); applyHealth(q.delta || 6); addCoins(10); }
+        else { playSfxBad(); applyHealth(-8); }
+        var fb = document.getElementById('fb-area');
+        fb.innerHTML = '<div class="feedback'+(isCorrect?'':' bad')+'">'+t(q.fb)+'</div>'+
+          '<div class="actions-row"><button class="btn" id="next-step">'+t({es:'Continuar', en:'Continue'})+'</button></div>';
+        document.getElementById('next-step').onclick = function(){
+          if(state.stepIndex + 1 < level.items.length){ state.stepIndex++; renderQuiz(level); }
+          else { playSfxLevelUp(); state.levelIndex++; state.phase = 'intro'; state.stepIndex = 0; render(); }
+        };
+      };
+    });
+  }
+
+  function renderMiniGame(level){
+    var cfg = level.game;
+    screenEl.innerHTML =
+      '<div class="level-tag">'+t(level.name)+'</div>'+
+      '<h2 class="title" style="font-size:0.78rem;">'+t(cfg.instructions)+'</h2>'+
+      '<div class="game-hud"><span id="mg-timer">16s</span><span id="mg-score">0 / '+cfg.goal+'</span></div>'+
+      '<div class="canvas-wrap"><canvas id="mg-canvas"></canvas></div>'+
+      '<div class="dpad-container">'+
+        '<button class="dpad-btn" id="dpad-up">▲</button>'+
+        '<div class="dpad-row">'+
+          '<button class="dpad-btn" id="dpad-left">◄</button>'+
+          '<button class="dpad-btn" id="dpad-down">▼</button>'+
+          '<button class="dpad-btn" id="dpad-right">►</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="controls-hint">Teclado: <strong>WASD</strong> o <strong>Flechas</strong></div>';
+
+    var canvas = document.getElementById('mg-canvas');
+    var cssW = canvas.parentElement.clientWidth;
+    var cssH = Math.round(cssW * 0.48);
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW / 3);
+    canvas.height = Math.round(cssH / 3);
+    var ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    var W = canvas.width, H = canvas.height;
+    var player = { x: W/2, y: H/2, r: 6, speed: 75 };
+    var items = [];
+    var collected = 0, timeLeft = cfg.duration;
+
+    function setupDpadBtn(id, keyName){
+      var btn = document.getElementById(id); if(!btn) return;
+      var start = function(e){ e.preventDefault(); keys[keyName] = true; btn.classList.add('active'); };
+      var end = function(e){ e.preventDefault(); keys[keyName] = false; btn.classList.remove('active'); };
+      btn.addEventListener('touchstart', start, {passive:false});
+      btn.addEventListener('touchend', end, {passive:false});
+      btn.addEventListener('mousedown', start); btn.addEventListener('mouseup', end); btn.addEventListener('mouseleave', end);
+    }
+    setupDpadBtn('dpad-up', 'up'); setupDpadBtn('dpad-down', 'down');
+    setupDpadBtn('dpad-left', 'left'); setupDpadBtn('dpad-right', 'right');
+
+    function spawn(type){ items.push({ x: Math.random()*(W-12)+6, y: Math.random()*(H-12)+6, r: 5, type: type }); }
+    for(var i=0; i<cfg.goodCount; i++) spawn('good');
+    for(var j=0; j<cfg.hazardCount; j++) spawn('bad');
+
+    var lastTs = null;
+    function loop(ts){
+      if(!lastTs) lastTs = ts;
+      var dt = (ts - lastTs) / 1000;
+      lastTs = ts; timeLeft -= dt;
+
+      if(keys.up) player.y -= player.speed * dt;
+      if(keys.down) player.y += player.speed * dt;
+      if(keys.left) player.x -= player.speed * dt;
+      if(keys.right) player.x += player.speed * dt;
+
+      player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+      player.y = Math.max(player.r, Math.min(H - player.r, player.y));
+
+      if(state.skills.magnet){
+        items.forEach(function(it){
+          if(it.type === 'good'){
+            var dx = player.x - it.x, dy = player.y - it.y;
+            var dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < 40){ it.x += (dx/dist)*30*dt; it.y += (dy/dist)*30*dt; }
+          }
+        });
+      }
+
+      for(var k = items.length-1; k>=0; k--){
+        var it = items[k];
+        var dist = Math.sqrt((it.x-player.x)*(it.x-player.x) + (it.y-player.y)*(it.y-player.y));
+        if(dist < it.r + player.r){
+          if(it.type === 'good'){ collected++; addCoins(2); playSfxGood(); }
+          else {
+            if(state.skills.shield > 0){ state.skills.shield--; playSfxGood(); }
+            else { applyHealth(-12); playSfxBad(); }
+          }
+          items.splice(k, 1); spawn(it.type);
+        }
+      }
+
+      ctx.fillStyle = cfg.bgFrom; ctx.fillRect(0,0,W,H);
+      items.forEach(function(it){
+        var shape = (it.type==='good') ? cfg.goodShape : cfg.hazardShape;
+        drawPixelGrid(ctx, PIXEL_GRIDS[shape]||PIXEL_GRIDS.drop, it.x, it.y, it.r, it.type==='good'?cfg.goodColor:cfg.hazardColor);
+      });
+      drawPixelGrid(ctx, PLAYER_GRID, player.x, player.y, player.r, '#0F3D3E');
+
+      document.getElementById('mg-timer').textContent = Math.ceil(timeLeft)+'s';
+      document.getElementById('mg-score').textContent = collected+' / '+cfg.goal;
+
+      if(timeLeft <= 0){
+        applyHealth(collected >= cfg.goal ? 10 : -5);
+        state.phase = 'content'; render(); return;
+      }
+      miniGameAnim = requestAnimationFrame(loop);
+    }
+    miniGameAnim = requestAnimationFrame(loop);
+  }
+
+  function renderEnding(){
+    screenEl.innerHTML =
+      '<div class="level-tag">'+t({es:'Certificado de Guardián', en:'Guardian Certificate'})+'</div>'+
+      '<h2 class="title">'+t({es:'¡Has completado el juego!', en:'Game Completed!'})+'</h2>'+
+      '<p class="subtitle">'+t({es:'Salud final del Río Cauca: ', en:'Final River Health: '})+state.health+'/100</p>'+
+      '<div class="actions-row"><button class="btn" id="restart">'+t({es:'Volver a jugar', en:'Play again'})+'</button></div>';
+    document.getElementById('restart').onclick = function(){
+      state.health = 70; state.coins = 30; state.levelIndex = 0; state.phase = 'intro'; updateHud(); render();
+    };
+  }
+
+  // Desbloqueo global de audio con el primer clic/toque en la pantalla
+  window.addEventListener('click', function(){ initAudio(); if(soundEnabled && !musicTimer) startMusic(); }, {once:true});
+  window.addEventListener('touchstart', function(){ initAudio(); if(soundEnabled && !musicTimer) startMusic(); }, {once:true});
+
+  updateHud(); render();
+})();
+</script>
+</body>
+</html>
