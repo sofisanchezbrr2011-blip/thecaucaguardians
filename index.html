@@ -33,12 +33,52 @@
     font-weight:400; margin:0; line-height:1.5;
   }
   button{ font-family:inherit; cursor:pointer; }
+
+  /* FONDO DE AGUA ANIMADO ESTILO RETRO RPG */
   #bg-waves{
     position:fixed; inset:0; z-index:0; pointer-events:none;
     background:
-      repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 2px, transparent 2px, transparent 4px),
-      linear-gradient(180deg, var(--river-deep) 0%, var(--river-mid) 100%);
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px, transparent 2px, transparent 4px),
+      radial-gradient(circle at 50% 30%, rgba(201, 162, 39, 0.08) 0%, transparent 70%),
+      linear-gradient(180deg, #072324 0%, var(--river-deep) 50%, var(--river-mid) 100%);
+    overflow: hidden;
   }
+
+  /* Capa de ondas y corriente retro */
+  #bg-waves::before {
+    content: "";
+    position: absolute; inset: -40px;
+    background-image: 
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 4px, transparent 4px 16px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 10px);
+    background-size: 32px 32px, 24px 24px;
+    animation: retroWaterDrift 5s steps(10, end) infinite;
+  }
+
+  /* Capa de destellos y espuma en el agua */
+  #bg-waves::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), rgba(0,0,0,0)),
+      radial-gradient(3px 3px at 50px 80px, rgba(230,245,240,0.25), rgba(0,0,0,0)),
+      radial-gradient(2px 2px at 90px 15px, rgba(201,162,39,0.3), rgba(0,0,0,0)),
+      radial-gradient(3px 3px at 130px 100px, rgba(255,255,255,0.2), rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 160px 130px;
+    animation: retroWaterShimmer 3s steps(6, end) infinite alternate;
+  }
+
+  @keyframes retroWaterDrift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(32px, 32px); }
+  }
+
+  @keyframes retroWaterShimmer {
+    0% { opacity: 0.5; transform: scale(1); }
+    100% { opacity: 0.9; transform: scale(1.02); }
+  }
+
   #app{
     position:relative; z-index:1;
     max-width:920px; margin:0 auto;
@@ -250,7 +290,6 @@
     }
   }
 
-  // SINTETIZADOR CORREGIDO (Transición lineal fluida para notas continuas)
   function playTone(freq, duration, type, vol){
     if(!soundEnabled) return;
     initAudio();
@@ -295,7 +334,6 @@
     } catch(e){}
   }
 
-  // EFECTOS DE SONIDO (SFX)
   function playSfxGood(){ playTone(587.33, 0.08, 'square', 0.15); setTimeout(function(){ playTone(880, 0.12, 'square', 0.15); }, 70); }
   function playSfxBad(){ playTone(160, 0.1, 'sawtooth', 0.18); setTimeout(function(){ playTone(110, 0.18, 'sawtooth', 0.18); }, 80); }
   function playSfxLevelUp(){
@@ -304,7 +342,6 @@
   }
   function playSfxBuy(){ playTone(440, 0.06, 'square', 0.15); setTimeout(function(){ playTone(880, 0.15, 'square', 0.15); }, 50); }
 
-  // REPRODUCTOR BGM CHIPTUNE (Volúmenes ajustados y loop robusto)
   var leadMelody = [
     {f: 329.63, d: 0.18}, {f: 392.00, d: 0.18}, {f: 440.00, d: 0.18}, {f: 523.25, d: 0.18},
     {f: 440.00, d: 0.18}, {f: 392.00, d: 0.18}, {f: 329.63, d: 0.35},
@@ -325,19 +362,16 @@
       if(!soundEnabled) return;
       initAudio();
 
-      // Melodía Principal (Square Wave)
       var note = leadMelody[noteStep];
       playTone(note.f, note.d, 'square', 0.12);
       noteStep = (noteStep + 1) % leadMelody.length;
 
-      // Línea de Bajo (Triangle Wave)
       if(noteStep % 2 === 0){
         var bNote = bassMelody[bassStep];
         playTone(bNote.f, bNote.d, 'triangle', 0.15);
         bassStep = (bassStep + 1) % bassMelody.length;
       }
 
-      // Percusión Sintética (Snare Noise)
       if(noteStep % 4 === 2){
         play8BitDrum();
       }
@@ -349,7 +383,6 @@
     if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
   }
 
-  // CONTROLES DE TECLADO
   var keys = { up: false, down: false, left: false, right: false };
   window.addEventListener('keydown', function(e){
     if(e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = true;
@@ -364,7 +397,6 @@
     if(e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
   });
 
-  // ESTADO Y TIENDA
   var state = {
     coins: 30, health: 70, levelIndex: 0, phase: 'intro', stepIndex: 0,
     skills: { shield: 0, magnet: false, voice: false, filter: 0 }
@@ -457,7 +489,6 @@
     LANG = (LANG === 'es') ? 'en' : 'es'; updateHud(); render();
   });
 
-  // NIVELES
   var LEVELS = [
     {
       key:'l1', name:{es:'Nivel 1 · El Río Sano', en:'Level 1 · The Healthy River'},
@@ -702,7 +733,6 @@
     };
   }
 
-  // Desbloqueo global de audio con el primer clic/toque en la pantalla
   window.addEventListener('click', function(){ initAudio(); if(soundEnabled && !musicTimer) startMusic(); }, {once:true});
   window.addEventListener('touchstart', function(){ initAudio(); if(soundEnabled && !musicTimer) startMusic(); }, {once:true});
 
