@@ -33,52 +33,12 @@
     font-weight:400; margin:0; line-height:1.5;
   }
   button{ font-family:inherit; cursor:pointer; }
-
-  /* FONDO DE AGUA ANIMADO ESTILO RETRO RPG */
   #bg-waves{
     position:fixed; inset:0; z-index:0; pointer-events:none;
     background:
-      repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px, transparent 2px, transparent 4px),
-      radial-gradient(circle at 50% 30%, rgba(201, 162, 39, 0.08) 0%, transparent 70%),
-      linear-gradient(180deg, #072324 0%, var(--river-deep) 50%, var(--river-mid) 100%);
-    overflow: hidden;
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 2px, transparent 2px, transparent 4px),
+      linear-gradient(180deg, var(--river-deep) 0%, var(--river-mid) 100%);
   }
-
-  /* Capa de ondas y corriente retro */
-  #bg-waves::before {
-    content: "";
-    position: absolute; inset: -40px;
-    background-image: 
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 4px, transparent 4px 16px),
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 10px);
-    background-size: 32px 32px, 24px 24px;
-    animation: retroWaterDrift 5s steps(10, end) infinite;
-  }
-
-  /* Capa de destellos y espuma en el agua */
-  #bg-waves::after {
-    content: "";
-    position: absolute; inset: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), rgba(0,0,0,0)),
-      radial-gradient(3px 3px at 50px 80px, rgba(230,245,240,0.25), rgba(0,0,0,0)),
-      radial-gradient(2px 2px at 90px 15px, rgba(201,162,39,0.3), rgba(0,0,0,0)),
-      radial-gradient(3px 3px at 130px 100px, rgba(255,255,255,0.2), rgba(0,0,0,0));
-    background-repeat: repeat;
-    background-size: 160px 130px;
-    animation: retroWaterShimmer 3s steps(6, end) infinite alternate;
-  }
-
-  @keyframes retroWaterDrift {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(32px, 32px); }
-  }
-
-  @keyframes retroWaterShimmer {
-    0% { opacity: 0.5; transform: scale(1); }
-    100% { opacity: 0.9; transform: scale(1.02); }
-  }
-
   #app{
     position:relative; z-index:1;
     max-width:920px; margin:0 auto;
@@ -163,32 +123,13 @@
 
   .actions-row{ margin-top:22px; display:flex; gap:12px; flex-wrap:wrap; }
 
-  /* Preguntas */
-  .q-block{ margin-top:18px; }
-  .q-count{ font-size:0.6rem; color:#6a7a76; margin-bottom:8px; display:block; }
-  .q-prompt{ font-size:1.25rem; font-weight:600; color:var(--ink); margin-bottom:16px; }
-  .options{ display:flex; flex-direction:column; gap:8px; }
-  .opt{
-    text-align:left; border:2px solid var(--ink); background:#fff;
-    padding:12px 14px; font-size:1.15rem; color:var(--ink);
-  }
-  .opt:hover:not(:disabled){ background:rgba(21,94,91,0.08); }
-  .opt.correct{ border-color:var(--leaf); background:var(--leaf); color:#fff; }
-  .opt.incorrect{ border-color:var(--danger); background:var(--danger); color:#fff; }
-
-  .feedback{
-    margin-top:14px; padding:12px 14px; font-size:1.1rem;
-    background:rgba(21,94,91,0.08); border:2px solid var(--river-mid); border-left:5px solid var(--river-mid);
-  }
-  .feedback.bad{ background:rgba(178,58,46,0.09); border-color:var(--danger); }
-
   /* Canvas y Controles */
   .game-hud{
     display:flex; justify-content:space-between; align-items:center;
     margin-top:8px; font-size:0.6rem; font-family:'Press Start 2P'; color:var(--river-deep);
   }
   .canvas-wrap{ margin-top:8px; border:3px solid var(--ink); line-height:0; position:relative; }
-  #mg-canvas{ display:block; width:100%; image-rendering:pixelated; background:#DFF3EC; }
+  #mg-canvas{ display:block; width:100%; background:#DFF3EC; }
 
   .dpad-container{ display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:14px; gap:4px; }
   .dpad-row{ display:flex; gap:4px; }
@@ -225,6 +166,45 @@
   }
   .buy-btn:disabled{ opacity:0.4; cursor:not-allowed; background:#ccc; }
 
+  /* Popup de Tip del Río (aviso pequeño centrado) */
+  #tip-modal{
+    display:none; position:fixed; inset:0; z-index:110;
+    background:rgba(15,61,62,0.55); align-items:center; justify-content:center; padding:16px;
+  }
+  #tip-modal.open{ display:flex; }
+  .tip-modal-card{
+    background:var(--paper); border:4px solid var(--ink); max-width:320px; width:100%;
+    padding:20px; box-shadow:6px 6px 0 rgba(0,0,0,0.45); text-align:center;
+  }
+  .tip-modal-head{
+    font-family:'Press Start 2P', monospace; font-size:0.62rem; line-height:1.5;
+    color:var(--river-deep); margin-bottom:10px;
+  }
+  .tip-modal-head.warn{ color:var(--danger); }
+  .tip-modal-text{ font-size:1.15rem; line-height:1.4; color:var(--ink); margin:0 0 16px; }
+  .tip-modal-card .btn{ width:100%; }
+  .gameover-card{
+    background:linear-gradient(180deg,#F9F3E6,#E8DCC2); border:4px solid var(--ink);
+    max-width:390px; width:100%; padding:24px; box-shadow:8px 8px 0 rgba(0,0,0,0.5);
+    text-align:center; position:relative; overflow:hidden;
+  }
+  .gameover-icon{ font-size:2.6rem; margin-bottom:8px; }
+  .gameover-title{ font-family:'Press Start 2P'; font-size:.9rem; line-height:1.6; color:var(--danger); margin:0 0 10px; }
+  .gameover-text{ font-size:1.2rem; line-height:1.4; margin:0 0 16px; color:var(--ink); }
+  .gameover-stats{ display:flex; justify-content:center; gap:16px; margin:0 0 18px; font-family:'Press Start 2P'; font-size:.55rem; color:var(--river-deep); }
+  #gameover-modal{
+    display:none; position:fixed; inset:0; z-index:120; background:rgba(8,35,36,.72);
+    backdrop-filter:blur(3px); align-items:center; justify-content:center; padding:16px;
+  }
+  #gameover-modal.open{ display:flex; }
+  #profile-modal{display:none;position:fixed;inset:0;z-index:130;background:rgba(8,35,36,.78);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:16px;}
+  #profile-modal.open{display:flex;}
+  .profile-card{background:linear-gradient(180deg,#F9F3E6,#E8DCC2);border:4px solid var(--ink);max-width:430px;width:100%;padding:24px;box-shadow:8px 8px 0 rgba(0,0,0,.5);text-align:center;}
+  .profile-title{font-family:'Press Start 2P';font-size:.85rem;line-height:1.6;color:var(--river-deep);margin-bottom:10px;}
+  .profile-text{font-size:1.18rem;line-height:1.4;color:var(--ink);margin:0 0 14px;}
+  .profile-input{width:100%;box-sizing:border-box;border:3px solid var(--ink);background:#fff;padding:12px;font-family:'VT323',monospace;font-size:1.35rem;color:var(--ink);margin-bottom:10px;outline:none;}
+  .saved-profiles{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:0 0 14px;}
+  .saved-profile-btn{border:2px solid var(--ink);background:#D9E9DF;color:var(--ink);padding:7px 10px;font-family:'VT323',monospace;font-size:1rem;cursor:pointer;}
   footer{ text-align:center; color:rgba(247,242,231,0.6); font-size:0.7rem; padding:14px 10px 0; }
 </style>
 </head>
@@ -266,6 +246,34 @@
     </div>
   </div>
 
+  <!-- POPUP DE TIP DEL RÍO -->
+  <div id="tip-modal">
+    <div class="tip-modal-card">
+      <div class="tip-modal-head" id="tip-modal-head"></div>
+      <p class="tip-modal-text" id="tip-modal-text"></p>
+      <button class="btn" id="tip-modal-next"></button>
+    </div>
+  </div>
+  <div id="profile-modal">
+    <div class="profile-card">
+      <div class="gameover-icon">🌊🛡️</div>
+      <div class="profile-title">¡HOLA, FUTURO GUARDIA!</div>
+      <p class="profile-text">¿Cuál es tu nombre, futuro guardia del Río Cauca?</p>
+      <input id="profile-name" class="profile-input" maxlength="18" autocomplete="off" placeholder="Escribe tu nombre">
+      <div id="saved-profiles" class="saved-profiles"></div>
+      <button class="btn" id="profile-start">Entrar al Río Cauca</button>
+    </div>
+  </div>
+  <div id="gameover-modal">
+    <div class="gameover-card">
+      <div class="gameover-icon">🌊⚠️</div>
+      <h2 class="gameover-title" id="gameover-title">¡NIVEL NO SUPERADO!</h2>
+      <p class="gameover-text" id="gameover-text"></p>
+      <div class="gameover-stats"><span id="gameover-score">0 / 0</span><span id="gameover-health">❤ 0</span></div>
+      <button class="btn" id="gameover-retry">Intentar de nuevo</button>
+    </div>
+  </div>
+
   <footer id="footer-note">Caucasia · Bajo Cauca · Antioquia — Proyecto educativo bilingüe</footer>
 </div>
 
@@ -290,6 +298,7 @@
     }
   }
 
+  // SINTETIZADOR CORREGIDO (Transición lineal fluida para notas continuas)
   function playTone(freq, duration, type, vol){
     if(!soundEnabled) return;
     initAudio();
@@ -334,6 +343,7 @@
     } catch(e){}
   }
 
+  // EFECTOS DE SONIDO (SFX)
   function playSfxGood(){ playTone(587.33, 0.08, 'square', 0.15); setTimeout(function(){ playTone(880, 0.12, 'square', 0.15); }, 70); }
   function playSfxBad(){ playTone(160, 0.1, 'sawtooth', 0.18); setTimeout(function(){ playTone(110, 0.18, 'sawtooth', 0.18); }, 80); }
   function playSfxLevelUp(){
@@ -342,6 +352,7 @@
   }
   function playSfxBuy(){ playTone(440, 0.06, 'square', 0.15); setTimeout(function(){ playTone(880, 0.15, 'square', 0.15); }, 50); }
 
+  // REPRODUCTOR BGM CHIPTUNE (Volúmenes ajustados y loop robusto)
   var leadMelody = [
     {f: 329.63, d: 0.18}, {f: 392.00, d: 0.18}, {f: 440.00, d: 0.18}, {f: 523.25, d: 0.18},
     {f: 440.00, d: 0.18}, {f: 392.00, d: 0.18}, {f: 329.63, d: 0.35},
@@ -362,16 +373,19 @@
       if(!soundEnabled) return;
       initAudio();
 
+      // Melodía Principal (Square Wave)
       var note = leadMelody[noteStep];
       playTone(note.f, note.d, 'square', 0.12);
       noteStep = (noteStep + 1) % leadMelody.length;
 
+      // Línea de Bajo (Triangle Wave)
       if(noteStep % 2 === 0){
         var bNote = bassMelody[bassStep];
         playTone(bNote.f, bNote.d, 'triangle', 0.15);
         bassStep = (bassStep + 1) % bassMelody.length;
       }
 
+      // Percusión Sintética (Snare Noise)
       if(noteStep % 4 === 2){
         play8BitDrum();
       }
@@ -383,6 +397,7 @@
     if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
   }
 
+  // CONTROLES DE TECLADO
   var keys = { up: false, down: false, left: false, right: false };
   window.addEventListener('keydown', function(e){
     if(e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = true;
@@ -397,10 +412,44 @@
     if(e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
   });
 
-  var state = {
-    coins: 30, health: 70, levelIndex: 0, phase: 'intro', stepIndex: 0,
-    skills: { shield: 0, magnet: false, voice: false, filter: 0 }
-  };
+  // PERFILES PERSISTENTES: cada nombre tiene sus propias monedas y habilidades.
+  var PROFILE_KEY='caucaGuardiansProfiles', profileName='';
+  function normalizeProfileName(name){return String(name||'').trim().replace(/\s+/g,' ').slice(0,18);}
+  function profileId(name){return normalizeProfileName(name).toLowerCase();}
+  function loadProfiles(){
+    try{var raw=localStorage.getItem(PROFILE_KEY);if(raw){var d=JSON.parse(raw);if(d&&d.profiles)return d.profiles;}}catch(e){}
+    return {};
+  }
+  function defaultProfile(){return {coins:30,skills:{shield:0,magnet:false,voice:false,filter:0}};}
+  function loadProfile(name){
+    var p=loadProfiles()[profileId(name)];
+    if(!p)return defaultProfile();
+    return {coins:typeof p.coins==='number'?p.coins:30,skills:{
+      shield:p.skills&&typeof p.skills.shield==='number'?p.skills.shield:0,
+      magnet:!!(p.skills&&p.skills.magnet),voice:!!(p.skills&&p.skills.voice),
+      filter:p.skills&&typeof p.skills.filter==='number'?p.skills.filter:0}};
+  }
+  function saveProfile(){
+    if(!profileName)return;
+    try{var profiles=loadProfiles();profiles[profileId(profileName)]={name:profileName,coins:state.coins,skills:state.skills};localStorage.setItem(PROFILE_KEY,JSON.stringify({profiles:profiles}));}catch(e){}
+  }
+  function renderSavedProfiles(){
+    var box=document.getElementById('saved-profiles');if(!box)return;
+    var ps=loadProfiles(),names=Object.keys(ps).map(function(id){return ps[id].name||id;});
+    if(!names.length){box.innerHTML='';return;}
+    box.innerHTML='<div style="width:100%;font-size:.95rem;margin-bottom:4px;color:#345;">Perfiles guardados:</div>'+
+      names.map(function(n){return '<button type="button" class="saved-profile-btn" data-name="'+String(n).replace(/"/g,'&quot;')+'">👤 '+String(n).replace(/</g,'&lt;')+'</button>';}).join('');
+    box.querySelectorAll('.saved-profile-btn').forEach(function(btn){btn.onclick=function(){document.getElementById('profile-name').value=btn.getAttribute('data-name');startProfile(btn.getAttribute('data-name'));};});
+  }
+  var profile=defaultProfile();
+  var state={coins:profile.coins,health:70,levelIndex:0,phase:'intro',skills:profile.skills,levelStats:{collected:0,goal:0,hits:0,gameOk:false}};
+  function resetLevelStats(){state.levelStats={collected:0,goal:0,hits:0,gameOk:false};}
+  function startProfile(name){
+    name=normalizeProfileName(name);if(!name)return;
+    profileName=name;profile=loadProfile(name);state.coins=profile.coins;state.skills=profile.skills;
+    state.health=70;state.levelIndex=0;state.phase='intro';resetLevelStats();saveProfile();updateHud();render();
+    document.getElementById('profile-modal').classList.remove('open');
+  }
 
   var SKILLS_DEF = [
     {
@@ -430,7 +479,7 @@
     if(delta > 0 && state.skills.voice){ delta *= 2; }
     state.health += delta; clampHealth(); updateHud();
   }
-  function addCoins(n){ state.coins += n; updateHud(); }
+  function addCoins(n){ state.coins += n; updateHud(); saveProfile(); }
 
   function updateHud(){
     document.getElementById('coin-count').textContent = state.coins;
@@ -466,7 +515,7 @@
         var id = btn.getAttribute('data-id');
         var sk = SKILLS_DEF.find(function(s){ return s.id === id; });
         if(sk && state.coins >= sk.cost){
-          state.coins -= sk.cost; sk.buy(); playSfxBuy(); updateHud(); renderShop();
+          state.coins -= sk.cost; sk.buy(); playSfxBuy(); updateHud(); saveProfile(); renderShop();
         }
       };
     });
@@ -489,78 +538,401 @@
     LANG = (LANG === 'es') ? 'en' : 'es'; updateHud(); render();
   });
 
+  // NIVELES
   var LEVELS = [
     {
       key:'l1', name:{es:'Nivel 1 · El Río Sano', en:'Level 1 · The Healthy River'},
-      intro:{es:'Bienvenido(a) a Caucasia. Usa WASD, flechas o el D-Pad táctil para recolectar agua limpia.', en:'Welcome to Caucasia. Use WASD, arrow keys, or touch D-Pad.'},
-      type:'quiz',
+      intro:{es:'Bienvenido(a) a Caucasia. Usa WASD, flechas o el D-Pad táctil para recoger la basura flotante del río.', en:'Welcome to Caucasia. Use WASD, arrow keys, or touch D-Pad to collect the floating trash.'},
       game:{
-        instructions:{es:'Controles: WASD / Flechas / D-Pad. Recoge gotas limpia e ignora la basura.', en:'Controls: WASD / Arrows / D-Pad. Collect clean water, avoid trash.'},
-        goodColor:'#4C9A6A', hazardColor:'#8a7452', goodShape:'drop', hazardShape:'trash', goodCount:4, hazardCount:3, duration:16, goal:8, bgFrom:'#DFF3EC'
+        instructions:{es:'Controles: WASD / Flechas / D-Pad. Recoge la basura flotante y evita las manchas de agua contaminada.', en:'Controls: WASD / Arrows / D-Pad. Collect the floating trash and avoid the contaminated water patches.'},
+        goodColor:['#E7C85A','#E9E7DD','#4AA6A0'], hazardColor:'#56652F', goodShape:'trash', hazardShape:'sludge', goodCount:4, hazardCount:3, duration:16, goal:8, itemSize:10.5, bgFrom:'#1E6E72', itemSize:10
       },
-      items:[{
-        prompt:{es:'¿Por qué el río Cauca es vital para Caucasia y el Bajo Cauca?', en:'Why is the Cauca River vital to Caucasia?'},
-        options:[
-          {es:'Solo es una vía de transporte rápida', en:'It is only a quick transport route'},
-          {es:'Provee agua, alimento, pesca y sustento económico a miles de familias', en:'Provides water, food, fishing, and economic support for thousands'},
-          {es:'No influye en la vida diaria de la comunidad', en:'Has no influence on daily community life'}
-        ], correct:1, fb:{es:'¡Correcto! El río es el corazón biológico y económico de la región.', en:'Correct! The river is the region\'s biological heart.'}, delta:6
-      }]
+      tips:{
+        good:{ es:'Cada pieza de basura que sacas del río evita que tapone quebradas y dañe la fauna. Tú: no arrojes residuos a caños ni quebradas, todo llega al río.', en:'Every piece of trash you pull out keeps creeks from clogging and protects wildlife. You: never dump waste into creeks or drains — it all reaches the river.' },
+        warn:{ es:'La basura que queda en el Cauca tapona quebradas y contamina el agua que usan miles de familias. Tú: no arrojes residuos a caños ni quebradas.', en:'Trash left in the Cauca clogs creeks and pollutes water thousands of families use. You: never dump waste into creeks or drains.' }
+      }
     },
     {
       key:'l2', name:{es:'Nivel 2 · La Amenaza del Mercurio', en:'Level 2 · The Mercury Threat'},
-      intro:{es:'La minería ilegal vierte mercurio al agua. Esquiva los barriles de contaminación.', en:'Illegal mining spills mercury into water. Dodge contamination barrels.'},
-      type:'quiz',
+      intro:{es:'La minería ilegal vierte mercurio al agua. Guía a los peces sanos lejos de los barriles y esquívalos.', en:'Illegal mining spills mercury into the water. Guide healthy fish away from the drums and dodge them.'},
       game:{
-        instructions:{es:'Colecta muestras de laboratorio y evita los barriles de mercurio.', en:'Collect lab samples and avoid mercury drums.'},
-        goodColor:'#2E86AB', hazardColor:'#B23A2E', goodShape:'vial', hazardShape:'drum', goodCount:4, hazardCount:4, duration:16, goal:8, bgFrom:'#E9E2C9'
+        instructions:{es:'Guía a los peces sanos y evita los barriles de mercurio.', en:'Guide the healthy fish and avoid the mercury drums.'},
+        goodColor:'#5FB8D9', hazardColor:'#B23A2E', goodShape:'fish', hazardShape:'drum', goodCount:4, hazardCount:4, duration:16, goal:8, bgFrom:'#2F6D63'
       },
-      items:[{
-        prompt:{es:'¿Qué ocurre cuando el mercurio entra a la cadena alimenticia acuática?', en:'What happens when mercury enters the aquatic food chain?'},
-        options:[
-          {es:'Se evapora sin causar ningún daño', en:'Evaporates without causing damage'},
-          {es:'Se bioacumula en los peces y llega a las personas que consumen pescado', en:'Bioaccumulates in fish and reaches humans who eat fish'},
-          {es:'Hace que los peces naden más rápido', en:'Makes fish swim faster'}
-        ], correct:1, fb:{es:'La bioacumulación por mercurio afecta gravemente la salud humana y la fauna.', en:'Mercury bioaccumulation severely harms human and fish health.'}, delta:8
-      }]
+      tips:{
+        good:{ es:'La minería ilegal vierte mercurio al Cauca, y ese metal se acumula en los peces. Tú: prefiere pescado de fuentes confiables y denuncia vertimientos ilegales.', en:'Illegal mining dumps mercury into the Cauca, and it builds up in fish. You: choose fish from trusted sources and report illegal dumping.' },
+        warn:{ es:'El mercurio de la minería ilegal se acumula en los peces del Cauca y llega a las personas. Tú: prefiere pescado de fuentes confiables y denuncia vertimientos ilegales.', en:'Mercury from illegal mining builds up in Cauca fish and reaches people. You: choose fish from trusted sources and report illegal dumping.' }
+      }
     },
     {
       key:'l3', name:{es:'Nivel 3 · Fauna y Pescadores', en:'Level 3 · Wildlife & Fishermen'},
       intro:{es:'Protege especies emblemáticas como el bocachico durante la época de subienda.', en:'Protect iconic species like bocachico during spawning seasons.'},
-      type:'quiz',
       game:{
         instructions:{es:'Guía a los bocachicos hacia aguas seguras y evita las redes ilegales.', en:'Guide bocachico fish to safety and avoid illegal nets.'},
-        goodColor:'#C9A227', hazardColor:'#4a4a4a', goodShape:'fish', hazardShape:'net', goodCount:5, hazardCount:3, duration:18, goal:10, bgFrom:'#CDEAF0'
+        goodColor:'#C9A227', hazardColor:'#4a4a4a', goodShape:'fish', hazardShape:'net', goodCount:5, hazardCount:3, duration:18, goal:10, bgFrom:'#1B5D74'
       },
-      items:[{
-        prompt:{es:'¿Qué es la "subienda" para los pescadores artesanales?', en:'What is "subienda" for local artisanal fishers?'},
-        options:[
-          {es:'La migración masiva de peces para reproducirse en el río', en:'Mass migration of fish upriver to reproduce'},
-          {es:'Una tormenta de verano', en:'A summer storm'},
-          {es:'Una feria gastronómica local', en:'A local food festival'}
-        ], correct:0, fb:{es:'Cuidar la subienda garantiza alimento y empleo responsable para el futuro.', en:'Protecting subienda ensures food security for the future.'}, delta:8
-      }]
+      tips:{
+        good:{ es:'La sobrepesca en época de subienda reduce la reproducción del bocachico en el Cauca. Tú: respeta las vedas y no compres pescado por debajo de la talla mínima.', en:'Overfishing during spawning season reduces bocachico reproduction in the Cauca. You: respect closed seasons and avoid undersized fish.' },
+        warn:{ es:'Pescar bocachico antes de que se reproduzca agota la subienda del Cauca año tras año. Tú: respeta las vedas y no compres pescado por debajo de la talla mínima.', en:"Catching bocachico before they spawn depletes the Cauca's run year after year. You: respect closed seasons and avoid undersized fish." }
+      }
     }
   ];
 
-  var PIXEL_GRIDS = {
-    drop:   ["...##...","..####..",".######.","########","########",".######.","..####..","...##..."],
-    trash:  ["########","#*#..#*#","#..##..#","#.#..#.#","#.####.#","#.#..#.#","#..##..#","########"],
-    vial:   ["..####..","..#**#..","..#..#..",".######.",".#*..*#.",".######.",".#*..*#.","..####.."],
-    drum:   [".######.","########","#oooooo#","########","########","#oooooo#","########",".######."],
-    fish:   ["...####.","..######",".######*","########","########",".#######","..######","...####."],
-    net:    ["#.#.#.#.",".#.#.#.#","#.#.#.#.",".#.#.#.#","#.#.#.#.",".#.#.#.#","#.#.#.#.",".#.#.#.#"]
-  };
-  var PLAYER_GRID = [".oooooo.","o######o","o#*##*#o","o######o","o######o",".o####o.","..o##o..","..o##o.."];
+  function roundRectPath(ctx, x, y, w, h, rad){
+    ctx.beginPath();
+    ctx.moveTo(x+rad, y);
+    ctx.arcTo(x+w, y, x+w, y+h, rad);
+    ctx.arcTo(x+w, y+h, x, y+h, rad);
+    ctx.arcTo(x, y+h, x, y, rad);
+    ctx.arcTo(x, y, x+w, y, rad);
+    ctx.closePath();
+  }
 
-  function drawPixelGrid(ctx, grid, x, y, r, mainColor){
-    var cell = (r*2)/8, startX = x - r, startY = y - r;
-    for(var row=0; row<8; row++){
-      for(var col=0; col<8; col++){
-        if(grid[row][col] === '.') continue;
-        ctx.fillStyle = (grid[row][col]==='o') ? '#0B2B2C' : (grid[row][col]==='*') ? '#FFF' : mainColor;
-        ctx.fillRect(Math.round(startX+col*cell), Math.round(startY+row*cell), Math.ceil(cell)+1, Math.ceil(cell)+1);
+  // Ajusta el brillo de un color hex (percent > 0 aclara, < 0 oscurece)
+  function shade(hex, percent){
+    hex = hex.replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var num = parseInt(hex, 16);
+    var r = Math.max(0, Math.min(255, (num >> 16) + percent));
+    var g = Math.max(0, Math.min(255, ((num >> 8) & 0xff) + percent));
+    var b = Math.max(0, Math.min(255, (num & 0xff) + percent));
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+
+  function volumeFill(ctx, x, y, r, color){
+    var g = ctx.createRadialGradient(x - r*0.3, y - r*0.35, r*0.1, x, y, r*1.15);
+    g.addColorStop(0, shade(color, 55));
+    g.addColorStop(0.55, color);
+    g.addColorStop(1, shade(color, -35));
+    return g;
+  }
+
+  function teardropPath(x, y, r){
+    var p = new Path2D();
+    p.moveTo(x, y - r*1.1);
+    p.bezierCurveTo(x + r*0.9, y - r*0.15, x + r*0.75, y + r*0.9, x, y + r*0.9);
+    p.bezierCurveTo(x - r*0.75, y + r*0.9, x - r*0.9, y - r*0.15, x, y - r*1.1);
+    p.closePath();
+    return p;
+  }
+
+  function drawDrop(ctx, x, y, r, color){
+    var path = teardropPath(x, y, r);
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = r*0.5; ctx.shadowOffsetY = r*0.12;
+    ctx.fillStyle = volumeFill(ctx, x, y, r, color);
+    ctx.fill(path);
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle = shade(color, -55); ctx.lineWidth = Math.max(1, r*0.09);
+    ctx.stroke(path);
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.beginPath(); ctx.ellipse(x - r*0.22, y - r*0.05, r*0.16, r*0.26, -0.4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // Basura flotante: tres sprites reconocibles (botella, lata y bolsa/empaque).
+  // La variante se calcula con la posición para que no haga falta guardar estado extra.
+  function drawTrash(ctx, x, y, r, color){
+    var palette = Array.isArray(color) ? color : [color];
+    var seed = Math.abs(Math.sin(x*12.9898 + y*78.233));
+    var variant = Math.floor(seed * 3);
+    var accent = palette[variant % palette.length];
+    var outline = '#173B3B';
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.shadowColor = 'rgba(0,0,0,0.38)';
+    ctx.shadowBlur = r*0.42;
+    ctx.shadowOffsetY = r*0.14;
+
+    if(variant === 0){
+      // BOTELLA
+      var w = r*0.72, h = r*1.55;
+      var body = ctx.createLinearGradient(-w/2, -h/2, w/2, h/2);
+      body.addColorStop(0, '#F7F5EA');
+      body.addColorStop(0.55, '#D9DDD7');
+      body.addColorStop(1, '#9EA9A4');
+      ctx.fillStyle = body;
+      roundRectPath(ctx, -w/2, -h/2+r*0.16, w, h*0.68, r*0.13); ctx.fill();
+      ctx.fillStyle = '#DDE3DE';
+      roundRectPath(ctx, -w*0.23, -h/2-r*0.03, w*0.46, h*0.32, r*0.07); ctx.fill();
+      ctx.fillStyle = '#E4B83E';
+      roundRectPath(ctx, -w*0.27, -h/2-r*0.13, w*0.54, h*0.13, r*0.04); ctx.fill();
+      ctx.fillStyle = accent;
+      roundRectPath(ctx, -w*0.45, -h*0.02, w*0.9, h*0.23, r*0.04); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.72)';
+      roundRectPath(ctx, -w*0.25, -h*0.24, w*0.11, h*0.42, r*0.04); ctx.fill();
+      ctx.strokeStyle = outline; ctx.lineWidth = Math.max(1, r*0.07);
+      roundRectPath(ctx, -w/2, -h/2+r*0.16, w, h*0.68, r*0.13); ctx.stroke();
+      roundRectPath(ctx, -w*0.23, -h/2-r*0.03, w*0.46, h*0.32, r*0.07); ctx.stroke();
+    } else if(variant === 1){
+      // LATA
+      var cw = r*1.05, ch = r*1.30;
+      var can = ctx.createLinearGradient(-cw/2, 0, cw/2, 0);
+      can.addColorStop(0, '#6D7B79');
+      can.addColorStop(0.22, '#D6DDDA');
+      can.addColorStop(0.55, '#F0F2EC');
+      can.addColorStop(1, '#71807D');
+      ctx.fillStyle = can;
+      roundRectPath(ctx, -cw/2, -ch/2, cw, ch, r*0.17); ctx.fill();
+      ctx.fillStyle = accent;
+      roundRectPath(ctx, -cw*0.46, -ch*0.06, cw*0.92, ch*0.28, r*0.04); ctx.fill();
+      ctx.fillStyle = '#BBC5C1';
+      ctx.beginPath(); ctx.ellipse(0, -ch/2, cw*0.46, r*0.13, 0, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#566260'; ctx.lineWidth = Math.max(1, r*0.045); ctx.stroke();
+      ctx.fillStyle = '#697572';
+      ctx.beginPath(); ctx.ellipse(0, -ch/2, cw*0.14, r*0.055, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.68)';
+      roundRectPath(ctx, -cw*0.28, -ch*0.28, cw*0.10, ch*0.36, r*0.03); ctx.fill();
+      ctx.strokeStyle = outline; ctx.lineWidth = Math.max(1, r*0.07);
+      roundRectPath(ctx, -cw/2, -ch/2, cw, ch, r*0.17); ctx.stroke();
+    } else {
+      // BOLSA / EMPAQUE
+      var bw = r*1.45, bh = r*1.05;
+      var pts = [
+        [-bw*0.52,-bh*0.35],[-bw*0.20,-bh*0.52],[0,-bh*0.38],[bw*0.22,-bh*0.5],
+        [bw*0.53,-bh*0.28],[bw*0.42,bh*0.42],[bw*0.05,bh*0.53],[-bw*0.32,bh*0.42],[-bw*0.56,bh*0.18]
+      ];
+      ctx.fillStyle = '#F2D34F';
+      ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+      for(var i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = accent;
+      ctx.beginPath(); ctx.moveTo(-bw*0.36,-bh*0.08); ctx.lineTo(bw*0.34,-bh*0.20); ctx.lineTo(bw*0.28,bh*0.10); ctx.lineTo(-bw*0.30,bh*0.22); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = 'rgba(80,70,35,0.55)'; ctx.lineWidth = Math.max(1, r*0.045);
+      ctx.beginPath(); ctx.moveTo(-bw*0.26,-bh*0.31); ctx.lineTo(-bw*0.10,bh*0.30);
+      ctx.moveTo(bw*0.05,-bh*0.32); ctx.lineTo(bw*0.18,bh*0.34); ctx.stroke();
+      ctx.strokeStyle = outline; ctx.lineWidth = Math.max(1, r*0.07);
+      ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+      for(var j=1;j<pts.length;j++) ctx.lineTo(pts[j][0],pts[j][1]);
+      ctx.closePath(); ctx.stroke();
+    }
+
+    // Brillo común: ayuda a que el objeto se lea sobre el agua.
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.beginPath(); ctx.arc(-r*0.62, -r*0.70, r*0.07, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawFish(ctx, x, y, r, color){
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = r*0.45; ctx.shadowOffsetY = r*0.1;
+    ctx.fillStyle = volumeFill(ctx, x, y, r, color);
+    ctx.beginPath(); ctx.ellipse(x - r*0.12, y, r*0.85, r*0.52, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + r*0.62, y); ctx.lineTo(x + r*1.15, y - r*0.42); ctx.lineTo(x + r*1.15, y + r*0.42);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle = shade(color, -50); ctx.lineWidth = Math.max(1, r*0.07);
+    ctx.beginPath(); ctx.ellipse(x - r*0.12, y, r*0.85, r*0.52, 0, 0, Math.PI*2); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.beginPath(); ctx.ellipse(x - r*0.3, y - r*0.18, r*0.22, r*0.12, -0.3, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#12211F';
+    ctx.beginPath(); ctx.arc(x - r*0.55, y - r*0.1, r*0.11, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x - r*0.58, y - r*0.13, r*0.04, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawDrum(ctx, x, y, r, color){
+    var w = r*1.5, h = r*1.85;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = r*0.5; ctx.shadowOffsetY = r*0.15;
+    var g = ctx.createLinearGradient(x-w/2, 0, x+w/2, 0);
+    g.addColorStop(0, shade(color,-25)); g.addColorStop(0.5, shade(color,30)); g.addColorStop(1, shade(color,-25));
+    ctx.fillStyle = g;
+    roundRectPath(ctx, x-w/2, y-h/2, w, h, r*0.28); ctx.fill();
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle = shade(color,-55); ctx.lineWidth = Math.max(1, r*0.08);
+    roundRectPath(ctx, x-w/2, y-h/2, w, h, r*0.28); ctx.stroke();
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(x-w/2, y-h*0.16, w, h*0.1);
+    ctx.fillRect(x-w/2, y+h*0.06, w, h*0.1);
+    ctx.fillStyle = '#FFD23F';
+    ctx.beginPath(); ctx.arc(x, y-h*0.28, r*0.32, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = Math.max(1, r*0.04); ctx.stroke();
+    ctx.fillStyle = '#12211F';
+    ctx.font = 'bold ' + Math.round(r*0.85) + 'px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('!', x, y-h*0.28);
+    ctx.restore();
+  }
+
+  function drawNet(ctx, x, y, r, color){
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = r*0.3;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.clip();
+    ctx.strokeStyle = color; ctx.lineWidth = Math.max(1, r*0.14);
+    for(var i=-2; i<=2; i++){
+      ctx.beginPath(); ctx.moveTo(x-r, y+i*r*0.5); ctx.lineTo(x+r, y+i*r*0.5+r*0.7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x-r, y+i*r*0.5+r*0.7); ctx.lineTo(x+r, y+i*r*0.5); ctx.stroke();
+    }
+    ctx.restore();
+    ctx.strokeStyle = shade(color, -30); ctx.lineWidth = Math.max(1, r*0.12);
+    ctx.beginPath(); ctx.arc(x, y, r*0.95, 0, Math.PI*2); ctx.stroke();
+  }
+
+  // Residuo contaminante flotante: una capa de espuma y aceite, no una simple mancha.
+  // Se compone de pequeños flotadores para que parezca algo que realmente permanece sobre el agua.
+  function drawSludge(ctx, x, y, r, color){
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,0.32)'; ctx.shadowBlur=r*0.32; ctx.shadowOffsetY=r*0.12;
+
+    // Película de aceite: elipse irregular y transparente.
+    var oil=ctx.createRadialGradient(x-r*.2,y-r*.18,r*.08,x,y,r*1.1);
+    oil.addColorStop(0,'rgba(176,194,93,0.72)');
+    oil.addColorStop(.45,'rgba(104,123,58,0.62)');
+    oil.addColorStop(1,'rgba(45,58,33,0.38)');
+    ctx.fillStyle=oil;
+    ctx.beginPath();
+    ctx.ellipse(x,y+r*.12,r*1.15,r*.48,-.08,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    // Aros de la película aceitosa.
+    ctx.strokeStyle='rgba(225,202,91,.72)'; ctx.lineWidth=Math.max(1,r*.06);
+    ctx.beginPath(); ctx.ellipse(x-r*.08,y,r*.78,r*.28,-.12,Math.PI*1.08,Math.PI*1.85); ctx.stroke();
+    ctx.strokeStyle='rgba(115,177,154,.62)';
+    ctx.beginPath(); ctx.ellipse(x+r*.12,y+r*.02,r*.92,r*.34,.05,-.25,.85); ctx.stroke();
+
+    // Espuma tóxica: varios grumos blancos/verdosos, mucho más reconocibles que una mancha.
+    var foam=[
+      [-.78,-.10,.30],[-.48,-.28,.23],[-.18,-.08,.34],[.16,-.25,.27],[.48,-.08,.31],[.76,-.02,.22],
+      [-.58,.20,.18],[-.22,.25,.21],[.25,.20,.19],[.58,.22,.17]
+    ];
+    foam.forEach(function(f,i){
+      var fx=x+r*f[0], fy=y+r*f[1], fr=r*f[2];
+      var fg=ctx.createRadialGradient(fx-fr*.25,fy-fr*.3,fr*.05,fx,fy,fr);
+      fg.addColorStop(0,'#D8DEB0'); fg.addColorStop(.55,'#A9B67A'); fg.addColorStop(1,'#697844');
+      ctx.fillStyle=fg;
+      ctx.beginPath(); ctx.arc(fx,fy,fr,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(39,52,30,.65)'; ctx.lineWidth=Math.max(1,r*.035); ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,.62)';
+      ctx.beginPath(); ctx.arc(fx-fr*.28,fy-fr*.30,fr*.18,0,Math.PI*2); ctx.fill();
+    });
+
+    // Pequeños residuos visibles dentro de la espuma.
+    ctx.fillStyle='#4B3D2A';
+    ctx.save(); ctx.rotate(-.2);
+    roundRectPath(ctx,x-r*.18,y-r*.05,r*.30,r*.08,r*.03); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='#5A4A2F';
+    ctx.beginPath(); ctx.arc(x+r*.52,y+r*.05,r*.055,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  var ICON_DRAW = { drop: drawDrop, trash: drawTrash, fish: drawFish, drum: drawDrum, net: drawNet, sludge: drawSludge };
+
+  function drawPlayer(ctx, x, y, r){
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.beginPath(); ctx.ellipse(x, y+r*0.95, r*0.75, r*0.22, 0, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = r*0.3; ctx.shadowOffsetY = r*0.08;
+    var bodyGrad = ctx.createRadialGradient(x - r*0.2, y - r*0.1, r*0.1, x, y + r*0.18, r*0.95);
+    bodyGrad.addColorStop(0, '#1F7A76'); bodyGrad.addColorStop(1, '#0F3D3E');
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath(); ctx.arc(x, y + r*0.18, r*0.85, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = '#C9A227'; ctx.lineWidth = r*0.16;
+    ctx.beginPath(); ctx.arc(x, y + r*0.18, r*0.85, Math.PI*0.12, Math.PI*0.88); ctx.stroke();
+
+    var faceGrad = ctx.createRadialGradient(x - r*0.15, y - r*0.45, r*0.1, x, y - r*0.32, r*0.65);
+    faceGrad.addColorStop(0, '#FBE0BE'); faceGrad.addColorStop(1, '#E8B888');
+    ctx.fillStyle = faceGrad;
+    ctx.beginPath(); ctx.arc(x, y - r*0.32, r*0.6, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = Math.max(1, r*0.04); ctx.stroke();
+
+    var hatGrad = ctx.createLinearGradient(x, y - r*1.3, x, y - r*0.5);
+    hatGrad.addColorStop(0, '#6BBE86'); hatGrad.addColorStop(1, '#3D7E52');
+    ctx.fillStyle = hatGrad;
+    ctx.beginPath();
+    ctx.moveTo(x - r*0.68, y - r*0.5);
+    ctx.quadraticCurveTo(x, y - r*1.3, x + r*0.68, y - r*0.5);
+    ctx.quadraticCurveTo(x, y - r*0.68, x - r*0.68, y - r*0.5);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.lineWidth = Math.max(1, r*0.05); ctx.stroke();
+
+    ctx.fillStyle = '#12211F';
+    ctx.beginPath(); ctx.arc(x - r*0.22, y - r*0.32, r*0.075, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + r*0.22, y - r*0.32, r*0.075, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.beginPath(); ctx.arc(x - r*0.19, y - r*0.35, r*0.025, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + r*0.25, y - r*0.35, r*0.025, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // FONDO ANIMADO DEL RÍO (para que el jugador recoja las cosas directo del agua)
+  function drawRiverBackground(ctx, W, H, cfg, tSec){
+    var grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0, shade(cfg.bgFrom, 20));
+    grad.addColorStop(0.5, cfg.bgFrom);
+    grad.addColorStop(1, '#0B2E2F');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+
+    // Profundidad del agua: franjas suaves que siguen el movimiento del río.
+    ctx.save();
+    ctx.globalAlpha=.10;
+    for(var depth=0; depth<5; depth++){
+      ctx.strokeStyle = depth%2 ? '#D8F3E9' : '#071F20';
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      for(var wx=0; wx<=W; wx+=5){
+        var wy=H*(.20+depth*.14)+Math.sin(wx*.045+tSec*1.3+depth)*2.2;
+        if(wx===0) ctx.moveTo(wx,wy); else ctx.lineTo(wx,wy);
       }
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    var bankH = Math.max(3, Math.round(H*0.09));
+    var bankGradTop = ctx.createLinearGradient(0,0,0,bankH);
+    bankGradTop.addColorStop(0, '#F5EEDD'); bankGradTop.addColorStop(1, '#DCCFAE');
+    ctx.fillStyle = bankGradTop; ctx.fillRect(0,0,W,bankH);
+    var bankGradBottom = ctx.createLinearGradient(0,H-bankH,0,H);
+    bankGradBottom.addColorStop(0, '#DCCFAE'); bankGradBottom.addColorStop(1, '#C9B98C');
+    ctx.fillStyle = bankGradBottom; ctx.fillRect(0,H-bankH,W,bankH);
+
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.fillRect(0, bankH, W, 2);
+    ctx.fillRect(0, H-bankH-2, W, 2);
+
+    ctx.fillStyle = '#4C9A6A';
+    for(var i=0; i<W; i+=6){
+      ctx.fillRect(i, bankH-2, 3, 2);
+      ctx.fillRect(i+2, H-bankH, 3, 2);
+    }
+
+    // Textura sutil del agua: pequeñas corrientes que aportan profundidad sin competir con los objetos.
+    ctx.strokeStyle = 'rgba(112,210,204,0.16)';
+    ctx.lineWidth = 1;
+    for(var flow=0; flow<7; flow++){
+      var fy = bankH + 9 + flow * ((H-bankH*2-18)/7);
+      ctx.beginPath();
+      for(var fx=0; fx<=W; fx+=7){
+        var fyy = fy + Math.sin(fx*0.045 + tSec*0.9 + flow*1.7) * 1.7;
+        if(fx===0) ctx.moveTo(fx,fyy); else ctx.lineTo(fx,fyy);
+      }
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.lineWidth = 1;
+    for(var row = bankH+4; row < H-bankH; row += 7){
+      ctx.beginPath();
+      for(var xx=0; xx<=W; xx+=4){
+        var yy = row + Math.sin(xx*0.15 + tSec*2 + row) * 1.4;
+        if(xx===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+      }
+      ctx.stroke();
     }
   }
 
@@ -572,52 +944,19 @@
     if(state.levelIndex >= LEVELS.length){ renderEnding(); return; }
     var level = LEVELS[state.levelIndex];
     if(state.phase === 'intro') renderLevelIntro(level);
-    else if(state.phase === 'game') renderMiniGame(level);
-    else renderQuiz(level);
+    else renderMiniGame(level);
   }
 
   function renderLevelIntro(level){
     screenEl.innerHTML =
       '<div class="hero">'+
+        '<div class="level-tag">👤 '+(profileName || 'Futuro guardia')+'</div>'+
         '<div class="level-tag">'+t(level.name)+'</div>'+
         '<h2 class="title">'+t(level.intro)+'</h2>'+
-        '<div class="actions-row"><button class="btn" id="start-level">'+t({es:'Comenzar nivel', en:'Start level'})+'</button></div>'+
+        '<p class="subtitle">¡Hola, '+(profileName ? profileName.replace(/</g,'&lt;') : 'futuro guardia')+'! El Río Cauca cuenta contigo.</p>'+
+        '<div class="actions-row"><button class="btn" id="start-level">'+t({es:'Comenzar nivel',en:'Start level'})+'</button></div>'+
       '</div>';
-    document.getElementById('start-level').onclick = function(){
-      startMusic(); state.phase = 'game'; render();
-    };
-  }
-
-  function renderQuiz(level){
-    var q = level.items[state.stepIndex];
-    var html =
-      '<div class="level-tag">'+t(level.name)+'</div>'+
-      '<div class="q-block">'+
-        '<span class="q-count">'+t({es:'Pregunta', en:'Question'})+' '+(state.stepIndex+1)+' / '+level.items.length+'</span>'+
-        '<div class="q-prompt">'+t(q.prompt)+'</div>'+
-        '<div class="options">';
-    q.options.forEach(function(opt, i){ html += '<button class="opt" data-i="'+i+'">'+t(opt)+'</button>'; });
-    html += '</div><div id="fb-area"></div></div>';
-    screenEl.innerHTML = html;
-
-    var buttons = screenEl.querySelectorAll('.opt');
-    buttons.forEach(function(btn){
-      btn.onclick = function(){
-        buttons.forEach(function(b){ b.disabled = true; });
-        var i = parseInt(btn.getAttribute('data-i'),10);
-        var isCorrect = (i === q.correct);
-        btn.classList.add(isCorrect ? 'correct' : 'incorrect');
-        if(isCorrect){ playSfxGood(); applyHealth(q.delta || 6); addCoins(10); }
-        else { playSfxBad(); applyHealth(-8); }
-        var fb = document.getElementById('fb-area');
-        fb.innerHTML = '<div class="feedback'+(isCorrect?'':' bad')+'">'+t(q.fb)+'</div>'+
-          '<div class="actions-row"><button class="btn" id="next-step">'+t({es:'Continuar', en:'Continue'})+'</button></div>';
-        document.getElementById('next-step').onclick = function(){
-          if(state.stepIndex + 1 < level.items.length){ state.stepIndex++; renderQuiz(level); }
-          else { playSfxLevelUp(); state.levelIndex++; state.phase = 'intro'; state.stepIndex = 0; render(); }
-        };
-      };
-    });
+    document.getElementById('start-level').onclick=function(){startMusic();resetLevelStats();state.phase='game';render();};
   }
 
   function renderMiniGame(level){
@@ -641,15 +980,17 @@
     var cssW = canvas.parentElement.clientWidth;
     var cssH = Math.round(cssW * 0.48);
     canvas.style.height = cssH + 'px';
-    canvas.width = Math.round(cssW / 3);
-    canvas.height = Math.round(cssH / 3);
+    canvas.width = Math.round(cssW / 2);
+    canvas.height = Math.round(cssH / 2);
     var ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true;
 
     var W = canvas.width, H = canvas.height;
-    var player = { x: W/2, y: H/2, r: 6, speed: 75 };
+    var scale = W / 300;
+    var player = { x: W/2, y: H/2, r: 11*scale, speed: 95*scale };
+    var itemR = (cfg.itemSize || 9)*scale;
     var items = [];
-    var collected = 0, timeLeft = cfg.duration;
+    var collected = 0, hits = 0, timeLeft = cfg.duration;
 
     function setupDpadBtn(id, keyName){
       var btn = document.getElementById(id); if(!btn) return;
@@ -662,7 +1003,7 @@
     setupDpadBtn('dpad-up', 'up'); setupDpadBtn('dpad-down', 'down');
     setupDpadBtn('dpad-left', 'left'); setupDpadBtn('dpad-right', 'right');
 
-    function spawn(type){ items.push({ x: Math.random()*(W-12)+6, y: Math.random()*(H-12)+6, r: 5, type: type }); }
+    function spawn(type){ items.push({ x: Math.random()*(W-itemR*2)+itemR, y: Math.random()*(H-itemR*2)+itemR, r: itemR, type: type, phase: Math.random()*Math.PI*2, tilt: (Math.random()-.5)*0.18 }); }
     for(var i=0; i<cfg.goodCount; i++) spawn('good');
     for(var j=0; j<cfg.hazardCount; j++) spawn('bad');
 
@@ -685,7 +1026,7 @@
           if(it.type === 'good'){
             var dx = player.x - it.x, dy = player.y - it.y;
             var dist = Math.sqrt(dx*dx + dy*dy);
-            if(dist < 40){ it.x += (dx/dist)*30*dt; it.y += (dy/dist)*30*dt; }
+            if(dist < 46*scale){ it.x += (dx/dist)*40*scale*dt; it.y += (dy/dist)*40*scale*dt; }
           }
         });
       }
@@ -696,6 +1037,7 @@
         if(dist < it.r + player.r){
           if(it.type === 'good'){ collected++; addCoins(2); playSfxGood(); }
           else {
+            hits++;
             if(state.skills.shield > 0){ state.skills.shield--; playSfxGood(); }
             else { applyHealth(-12); playSfxBad(); }
           }
@@ -703,23 +1045,93 @@
         }
       }
 
-      ctx.fillStyle = cfg.bgFrom; ctx.fillRect(0,0,W,H);
+      drawRiverBackground(ctx, W, H, cfg, ts/1000);
       items.forEach(function(it){
         var shape = (it.type==='good') ? cfg.goodShape : cfg.hazardShape;
-        drawPixelGrid(ctx, PIXEL_GRIDS[shape]||PIXEL_GRIDS.drop, it.x, it.y, it.r, it.type==='good'?cfg.goodColor:cfg.hazardColor);
+        var color = it.type==='good' ? cfg.goodColor : cfg.hazardColor;
+        var bob = Math.sin(ts/430 + it.phase) * it.r*0.10;
+        ctx.save();
+        if(it.type==='good'){
+          ctx.strokeStyle='rgba(244,211,94,.20)';
+          ctx.lineWidth=Math.max(1,it.r*.12);
+          ctx.beginPath(); ctx.arc(it.x,it.y+bob,it.r*1.28,0,Math.PI*2); ctx.stroke();
+        }
+        ctx.translate(0,bob);
+        if(shape==='trash') ctx.rotate(Math.sin(ts/700+it.phase)*it.tilt);
+        (ICON_DRAW[shape] || ICON_DRAW.drop)(ctx, it.x, it.y, it.r, color);
+        ctx.restore();
       });
-      drawPixelGrid(ctx, PLAYER_GRID, player.x, player.y, player.r, '#0F3D3E');
+      drawPlayer(ctx, player.x, player.y, player.r);
 
       document.getElementById('mg-timer').textContent = Math.ceil(timeLeft)+'s';
       document.getElementById('mg-score').textContent = collected+' / '+cfg.goal;
 
+      if(state.health <= 0){
+        state.levelStats.collected=collected; state.levelStats.goal=cfg.goal; state.levelStats.hits=hits;
+        state.levelStats.gameOk=false;
+        showGameOver(level,'health',collected,hits);
+        return;
+      }
       if(timeLeft <= 0){
-        applyHealth(collected >= cfg.goal ? 10 : -5);
-        state.phase = 'content'; render(); return;
+        var reachedGoal = (collected >= cfg.goal);
+        applyHealth(reachedGoal ? 10 : -5);
+        state.levelStats.collected = collected;
+        state.levelStats.goal = cfg.goal;
+        state.levelStats.hits = hits;
+        state.levelStats.gameOk = reachedGoal;
+        if(!reachedGoal){ showGameOver(level,'time',collected,hits); return; }
+        showLevelTip(level, true);
+        return;
       }
       miniGameAnim = requestAnimationFrame(loop);
     }
     miniGameAnim = requestAnimationFrame(loop);
+  }
+
+  function showGameOver(level, reason, finalCollected, finalHits){
+    if(miniGameAnim){ cancelAnimationFrame(miniGameAnim); miniGameAnim=null; }
+    keys.up=keys.down=keys.left=keys.right=false;
+    var modal=document.getElementById('gameover-modal');
+    var title=document.getElementById('gameover-title');
+    var text=document.getElementById('gameover-text');
+    var score=document.getElementById('gameover-score');
+    var health=document.getElementById('gameover-health');
+    title.textContent = reason==='health' ? '¡EL RÍO COLAPSÓ!' : '¡NIVEL NO SUPERADO!';
+    text.textContent = reason==='health'
+      ? t({es:'Los impactos fueron demasiados y la salud del río llegó a 0.',en:'Too many impacts caused the river health to reach 0.'})
+      : t({es:'Se acabó el tiempo y no reuniste suficiente basura. ¡Inténtalo otra vez!',en:'Time ran out before you collected enough trash. Try again!' });
+    score.textContent = finalCollected+' / '+level.game.goal;
+    health.textContent = '❤ '+state.health;
+    modal.classList.add('open');
+    document.getElementById('gameover-retry').onclick=function(){
+      modal.classList.remove('open');
+      state.health=70;
+      resetLevelStats();
+      state.phase='game';
+      updateHud();
+      render();
+    };
+  }
+
+  function showLevelTip(level, wentWell){
+    var tips = level.tips || {};
+    var isLast = (state.levelIndex + 1 >= LEVELS.length);
+    var headEl = document.getElementById('tip-modal-head');
+    var textEl = document.getElementById('tip-modal-text');
+    var nextBtn = document.getElementById('tip-modal-next');
+
+    headEl.className = 'tip-modal-head' + (wentWell ? '' : ' warn');
+    headEl.textContent = (wentWell ? '🌊 ' : '⚠️ ') + t({es:'TIP DEL RÍO', en:'RIVER TIP'});
+    textEl.textContent = t(wentWell ? tips.good : tips.warn);
+    nextBtn.textContent = isLast ? t({es:'Ver resultado final', en:'See final result'}) : t({es:'Siguiente nivel', en:'Next level'});
+
+    document.getElementById('tip-modal').classList.add('open');
+    nextBtn.onclick = function(){
+      document.getElementById('tip-modal').classList.remove('open');
+      playSfxLevelUp();
+      state.levelIndex++; state.phase = 'intro';
+      resetLevelStats(); render();
+    };
   }
 
   function renderEnding(){
@@ -729,10 +1141,22 @@
       '<p class="subtitle">'+t({es:'Salud final del Río Cauca: ', en:'Final River Health: '})+state.health+'/100</p>'+
       '<div class="actions-row"><button class="btn" id="restart">'+t({es:'Volver a jugar', en:'Play again'})+'</button></div>';
     document.getElementById('restart').onclick = function(){
-      state.health = 70; state.coins = 30; state.levelIndex = 0; state.phase = 'intro'; updateHud(); render();
+      state.health = 70; state.levelIndex = 0; state.phase = 'intro';
+      resetLevelStats(); updateHud(); render();
     };
   }
 
+  // Pantalla inicial de guardia/perfil
+  document.getElementById('profile-start').onclick = function(){
+    startProfile(document.getElementById('profile-name').value);
+  };
+  document.getElementById('profile-name').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') startProfile(this.value);
+  });
+  renderSavedProfiles();
+  document.getElementById('profile-modal').classList.add('open');
+
+  // Desbloqueo global de audio con el primer clic/toque en la pantalla
   window.addEventListener('click', function(){ initAudio(); if(soundEnabled && !musicTimer) startMusic(); }, {once:true});
   window.addEventListener('touchstart', function(){ initAudio(); if(soundEnabled && !musicTimer) startMusic(); }, {once:true});
 
